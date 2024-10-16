@@ -43,7 +43,6 @@ graph_builder = StateGraph(State)
 
 tool = TavilySearchResults(max_results=2)
 tools = [tool]
-tool.invoke("What's a 'node' in LangGraph?")
 model = ChatBedrockConverse(
     model="anthropic.claude-3-haiku-20240307-v1:0").bind_tools(tools)
 
@@ -71,8 +70,10 @@ def route_tools(state: State):
 
 tool_node = BasicToolNode(tools=[tool])
 
+# Add nodes
 graph_builder.add_node("chatbot", chatbot)
 graph_builder.add_node("tools", tool_node)
+# Add edges
 graph_builder.add_edge(START, "chatbot")
 graph_builder.add_conditional_edges(
     "chatbot",
