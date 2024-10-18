@@ -30,5 +30,5 @@ pipenv shell
 
 ```bash
 export AWS_PROFILE=<your profile>
-TAVILY_API_KEY=<your API key> python run.py
+TAVILY_API_KEY=<your API key> python run_chatbot.py
 ```
