@@ -40,27 +40,8 @@ print(existing_message.tool_calls)
 print("Original")
 print("Message ID", existing_message.id)
 
-# Add modificaiton to tools
-new_tool_call = existing_message.tool_calls[0].copy()
-new_tool_call["args"]["query"] = "LangGraph human-in-the-loop workflow"
-
-new_message = AIMessage(
-    content=existing_message.content,
-    tool_calls=[new_tool_call],
-    id=existing_message.id
-)
-
-print("Updated")
-print(new_message.tool_calls[0])
-print("Message ID", new_message.id)
-graph.update_state(config, {"messages": [new_message]})
-
-print("\n\nTool calls")
-graph.get_state(config).values["messages"][-1].tool_calls
-
-stream_graph_updates(graph, config, None)
-
-# Give a human specified message as revised answer
+# =========================================================
+# Pattern1: Give an answer directly to chatbot node omitting tools.
 # answer = (
 #     "LangGraph is a library for building stateful, multi-actor applications with LLM."
 # )
@@ -80,6 +61,30 @@ stream_graph_updates(graph, config, None)
 # snapshot = graph.get_state(config)
 # print(snapshot.values["messages"][-3:])
 # print(snapshot.next)
+# =========================================================
+
+# =========================================================
+# Pattern2: Overwrite exsiting message
+new_tool_call = existing_message.tool_calls[0].copy()
+new_tool_call["args"]["query"] = "LangGraph human-in-the-loop workflow"
+
+new_message = AIMessage(
+    content=existing_message.content,
+    tool_calls=[new_tool_call],
+    id=existing_message.id
+)
+
+print("Updated")
+print(new_message.tool_calls[0])
+print("Message ID", new_message.id)
+graph.update_state(config, {"messages": [new_message]})
+
+print("\n\nTool calls")
+graph.get_state(config).values["messages"][-1].tool_calls
+# =========================================================
+
+# Resume the graph by streaming with an input of None and the existing config.
+stream_graph_updates(graph, config, None)
 
 # Confirm the effectivity of checkpoint usage
 stream_graph_updates(
